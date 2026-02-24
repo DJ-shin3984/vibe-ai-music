@@ -22,6 +22,18 @@
 - **역할**: 테스트 계획·케이스·자동화 제안 및 검증.
 - **참조 룰**: `@.cursor/rules/testing.mdc`
 
+### 4. Database Expert
+
+- **파일**: [.cursor/agents/database-expert.md](.cursor/agents/database-expert.md)
+- **역할**: DB 설계·운영·튜닝. 스키마, 인덱스, 쿼리 최적화, 트랜잭션·동시성, 백업·모니터링. Supabase/Postgres 시 문서·MCP 참고.
+- **참조 룰**: `@.cursor/rules/core.mdc`
+
+### 5. Backend Engineer
+
+- **파일**: [.cursor/agents/backend-engineer.md](.cursor/agents/backend-engineer.md)
+- **역할**: 15년+ 백엔드. API 설계·구현, 인증·보안, Server Actions/Route Handlers, 에러·로깅, Supabase 연동.
+- **참조 룰**: `@.cursor/rules/core.mdc`, `@.cursor/rules/ai-policies.mdc`
+
 ---
 
 ## Skills (`.cursor/skills/`)
