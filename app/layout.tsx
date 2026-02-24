@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Syne, Dancing_Script } from "next/font/google";
-import { AppHeader } from "@/components/AppHeader";
+import { HeaderRouter } from "@/components/HeaderRouter";
 import { AuthProvider } from "@/context/AuthContext";
 import "./globals.css";
 
@@ -32,7 +32,7 @@ export default function RootLayout({
         className={`${syne.variable} ${dancingScript.variable} min-h-[100dvh] min-h-screen flex flex-col bg-black antialiased`}
       >
         <AuthProvider>
-          <AppHeader />
+          <HeaderRouter />
           {children}
         </AuthProvider>
       </body>

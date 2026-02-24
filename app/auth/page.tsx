@@ -19,7 +19,7 @@ export default function AuthPage() {
   useEffect(() => {
     if (isLoading) return;
     if (user) {
-      router.replace("/");
+      router.replace("/workspace");
     }
   }, [user, isLoading, router]);
 

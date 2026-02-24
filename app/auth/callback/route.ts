@@ -3,12 +3,12 @@ import { createClient } from "@/lib/supabase/server";
 
 /**
  * OAuth 콜백. Supabase가 code를 담아 리다이렉트한 뒤,
- * code를 세션으로 교환하고 next 파라미터 또는 / 로 리다이렉트한다.
+ * code를 세션으로 교환하고 next 파라미터 또는 /workspace 로 리다이렉트한다.
  */
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get("code");
-  const next = searchParams.get("next") ?? "/";
+  const next = searchParams.get("next") ?? "/workspace";
 
   if (code) {
     const supabase = await createClient();

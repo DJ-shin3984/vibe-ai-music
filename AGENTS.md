@@ -40,6 +40,7 @@
 
 | 스킬 | 경로 | 트리거 예 |
 |------|------|-----------|
+| Domain-Aware | `.cursor/skills/domain-aware/SKILL.md` | 신규 기능 기획, 용어·라벨 결정, API/스키마 설계, 사용자 시나리오 |
 | Frontend UI/UX | `.cursor/skills/frontend-ui-ux/SKILL.md` | UI 구현, React/Next.js, 컴포넌트, 스타일, 페이지 |
 | Review Outputs | `.cursor/skills/review-outputs/SKILL.md` | 코드 리뷰, 개선 제안, 품질 분석 |
 | QA Test | `.cursor/skills/qa-test-outputs/SKILL.md` | 테스트 케이스, 테스트 계획, QA 검증 |
@@ -48,8 +49,10 @@
 
 ## Rules (`.cursor/rules/`)
 
-- **항상 적용**: `core.mdc`, `workflow.mdc`, `ai-policies.mdc`
+- **항상 적용**: `core.mdc`, `workflow.mdc`, `ai-policies.mdc`, `domain.mdc`
 - **컨텍스트별**: `frontend.mdc`, `languages.mdc`, `testing.mdc`
+
+`domain.mdc`: Vibe AI Music 서비스 도메인 정의. 모든 요청은 이 도메인을 전제로 실행한다.
 
 ---
 
