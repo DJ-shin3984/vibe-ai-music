@@ -1,9 +1,16 @@
 import type { Metadata } from "next";
+import { Syne } from "next/font/google";
 import "./globals.css";
 
+const syne = Syne({
+  subsets: ["latin"],
+  variable: "--font-syne",
+  display: "swap",
+});
+
 export const metadata: Metadata = {
-  title: "vibe-ai-music",
-  description: "Next.js + .cursor (rules, skills, agents) 보일러플레이트",
+  title: "Vibe AI Music",
+  description: "AI와 함께 만드는 당신만의 음악",
 };
 
 export default function RootLayout({
@@ -13,7 +20,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko">
-      <body className="antialiased">{children}</body>
+      <body className={`${syne.variable} antialiased`}>{children}</body>
     </html>
   );
 }
