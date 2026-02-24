@@ -1,0 +1,20 @@
+---
+description: 작업 유형에 따라 적용할 룰·스킬 자동 선택 (프론트/리뷰/QA)
+alwaysApply: true
+---
+
+# Workflow — 룰·스킬 자동 적용
+
+다음 작업 유형이면 **사용자가 따로 요청하지 않아도** 해당 룰과 스킬을 적용한다.
+
+## 프론트엔드 / UI·UX
+
+요청이 다음에 해당하면 **frontend 룰**과 **frontend-ui-ux 스킬**을 적용한다:
+
+- UI, 컴포넌트, 페이지, 화면, 스타일, todo, 리스트, 구현
+- React, Next.js, Redux, Tailwind, CSS, 프론트엔드, UI/UX
+- 접근성(a11y), 반응형, 클라이언트 상태
+
+**적용**: `@.cursor/rules/frontend.mdc`, `@.cursor/skills/frontend-ui-ux/SKILL.md` (및 `@.cursor/agents/frontend-ui-ux.md`)
+
+파일을 열지 않고 말만 했을 때도 위 판단 기준으로 적용한다.

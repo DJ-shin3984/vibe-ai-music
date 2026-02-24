@@ -1,0 +1,676 @@
+---
+globs: "**/*.tsx", "**/*.jsx", "**/*.css", "**/src/**"
+description: HTML, CSS, React, Next.js, Redux, Zustand, TanStack Query, Apollo, Tailwind, CSS Modules, styled-components, Sass, React Native
+alwaysApply: false
+---
+
+# Frontend & Web UI
+
+## Comments & Inline Documentation
+
+- **함수**: 목적·역할이 코드만으로 명확하지 않으면 간단한 주석을 단다. 공개 API나 훅·유틸은 JSDoc(또는 프로젝트 관례)으로 목적·파라미터·반환값을 적는다.
+- **변수**: 모듈/파일 최상단 변수, 상수, 복잡한 식의 결과는 의도가 드러나도록 한 줄 주석을 둔다. 이름만으로 충분하면 생략해도 된다.
+- **컴포넌트**: 재사용 컴포넌트·페이지 컴포넌트에는 파일 상단 또는 export 위에 역할·사용처를 한두 문장으로 적는다.
+- **복잡한 로직**: 비즈니스/UI 분기·알고리즘 등이 한눈에 들어오지 않을 때만 “왜”를 설명하는 주석을 추가한다.
+- 주석은 짧고 사실에 맞게 유지한다. 코드 변경 시 관련 주석도 함께 수정·삭제한다.
+
+---
+
+## HTML
+
+### Structure & Semantics
+- Prefer semantic HTML elements (`header`, `main`, `nav`, `section`, `article`, `button`, etc.) over generic `div`/`span`.
+- Use the simplest structure that accurately represents the content and interaction.
+- Avoid unnecessary nesting or wrapper elements.
+- Keep document structure logical and predictable.
+
+### Accessibility (a11y)
+- Always use native elements for interaction (`button`, `a`, `input`) instead of clickable `div`s.
+- Include accessible labels for form controls (`label`, `aria-label`, or `aria-labelledby`).
+- Provide meaningful `alt` text for images; use empty `alt=""` only for decorative images.
+- Ensure interactive elements are keyboard accessible.
+- Do not remove focus outlines unless replaced with a visible alternative.
+
+### Forms & Inputs
+- Use appropriate input types (`email`, `number`, `date`, etc.) for built-in validation and mobile UX.
+- Associate labels with inputs using `for` and `id`.
+- Avoid relying solely on placeholder text for field meaning.
+
+### Attributes & Safety
+- Escape or sanitize any user-provided content before rendering.
+- Avoid inline event handlers (`onclick`, etc.); prefer separation of structure and behavior.
+- Avoid inline styles unless required by the existing project pattern.
+
+### Performance & Maintainability
+- Prefer simple, static markup over dynamically generated structure when possible.
+- Avoid large DOM trees or deeply nested layouts without need.
+- Keep class and id usage minimal and purposeful.
+
+### Consistency
+- Follow the existing formatting and attribute conventions in the project.
+- Keep attribute ordering and casing consistent with the codebase.
+
+---
+
+## CSS
+
+### Scope & Strategy
+- Follow the existing styling approach in the project (global CSS, modules, utility-first, CSS-in-JS, etc.). Do not introduce a new styling system.
+- Prefer local scoping (modules, component scope, or specific class selectors) over global styles.
+- Avoid styling by element selectors unless it's part of a global reset or typography system.
+
+### Selectors
+- Keep selectors simple and shallow. Avoid deep descendant chains.
+- Prefer class selectors over ids and overqualified selectors.
+- Avoid high specificity and `!important` unless there is no reasonable alternative.
+
+### Layout
+- Prefer modern layout primitives:
+  - Flexbox for one-dimensional layout
+  - Grid for two-dimensional layout
+- Avoid layout hacks (floats, absolute positioning) unless required by the existing code.
+- Avoid fixed heights unless the design truly requires them.
+
+### Responsiveness
+- Use fluid layouts and relative units (`%`, `rem`, `em`, `vh/vw`) where appropriate.
+- Follow existing breakpoint conventions in the project.
+- Avoid hardcoding values that will break at different screen sizes.
+
+### Maintainability
+- Reuse existing variables, tokens, utilities, and design system values.
+- Do not introduce new spacing, colors, or typography scales unless necessary.
+- Keep rules focused and cohesive; avoid large "catch-all" style blocks.
+
+### Performance
+- Avoid overly complex selectors that are expensive to evaluate.
+- Do not trigger unnecessary layout or paint issues (e.g., excessive use of `position: fixed`, heavy box shadows, large blur filters).
+
+### State & Interaction
+- Prefer class-based state (`.is-active`, `.disabled`, etc.) over inline style manipulation.
+- Ensure hover/focus/active states exist where interaction is expected.
+- Never remove focus visibility without providing a clear alternative.
+
+### Consistency
+- Match the project's naming conventions and file organization.
+- Do not reformat or reorganize unrelated styles.
+
+---
+
+## React (framework only)
+
+### Component Design
+- Prefer function components and hooks.
+- Keep components small and responsibility-focused; split by UI responsibility, not by file count.
+- Prefer composition over configuration-heavy components.
+- Avoid prop drilling for deeply shared state; use existing app patterns (context/store) when appropriate.
+
+### State & Derived Data
+- Keep state minimal: store the source of truth, derive the rest.
+- Do not mirror props into state unless you have a clear synchronization reason.
+- Avoid storing derived values that can be computed from props/state.
+- Prefer functional `setState(prev => next)` when next depends on previous.
+
+### Rendering Performance
+- Fix unnecessary re-renders by stabilizing props (memoize callbacks/objects) only when there's evidence it matters.
+- Avoid premature `useMemo`/`useCallback` everywhere; use them intentionally for referential stability or expensive work.
+- Avoid creating new objects/functions in render paths when passing to memoized children in hot components.
+
+### Effects & Lifecycles
+- Treat `useEffect` as a synchronization tool, not a general event handler.
+- Put the right dependencies in dependency arrays; do not "cheat" them away.
+- Prefer event-driven updates over effects when possible.
+- Clean up subscriptions/timers in effects to prevent leaks and duplicate listeners.
+
+### Data Fetching Boundaries
+- Do not fetch in random components if the app has a standard pattern (route loader, hooks layer, query library, etc.).
+- Keep async side effects in dedicated hooks/services where possible, not inside presentational components.
+
+### Forms & Controlled Inputs
+- Prefer controlled components for inputs that affect app state or validation.
+- Avoid excessive re-renders in large forms; follow existing form library/pattern if present.
+
+### Accessibility
+- Use semantic elements for interaction (`button`, `a`, `input`) instead of clickable `div`s.
+- Ensure focus and keyboard interaction work for custom components.
+- Provide labels for form controls and meaningful alt text for images.
+
+### Keys & Lists
+- Keys must be stable and unique. Never use array index as a key unless the list is truly static and never reordered.
+
+### Context
+- Keep context values stable (memoize provider values when needed).
+- Avoid putting rapidly changing values into context that forces broad re-renders.
+- Prefer multiple focused contexts over one "app state" mega-context.
+
+### Styling & UI Libraries
+- Follow existing styling conventions (CSS modules, Tailwind, CSS-in-JS, etc.).
+- Do not introduce a new UI/styling library unless explicitly requested.
+
+### File/Export Hygiene
+- Prefer named exports for reusable components/hooks unless the repo standard is default exports.
+- Keep hooks in `useX` naming; keep components PascalCase.
+
+---
+
+## Next.js (App Router only)
+
+### Routing & Rendering Model
+- Use the App Router mental model: Server Components by default, Client Components only when needed.
+- Keep pages/layouts as thin orchestration; push UI into components and data access into server-side functions.
+- Prefer route segments + nested layouts over manual conditional layout logic.
+
+### Server vs Client Components
+- Default to Server Components; add `"use client"` only when you need:
+  - local state (`useState`, `useReducer`)
+  - effects (`useEffect`)
+  - browser-only APIs (`window`, `document`)
+  - event handlers on the component boundary
+- Minimize the surface area of Client Components: keep them small and leaf-y.
+- Do not import server-only code into Client Components (db access, server secrets, filesystem, etc.).
+
+### Data Fetching
+- Prefer fetching on the server (in Server Components / server actions / route handlers) when possible.
+- Keep a single data-fetch boundary per route when practical; avoid scattered fetches across many components.
+- Respect caching semantics; don't disable caching globally without a clear reason.
+- Avoid duplicating the same fetch across server components; share via a single function or co-located fetch.
+
+### Server Actions
+- Use Server Actions for mutations that belong to the route/page boundary.
+- Validate inputs on the server; treat all client input as untrusted.
+- Keep Server Action modules server-only; never leak secrets to the client.
+
+### Route Handlers
+- Use `app/api/.../route.ts` for API endpoints.
+- Return proper status codes and content types.
+- Avoid shipping large logic into route handlers; call into service modules.
+
+### Navigation & Params
+- Use `next/link` for internal navigation.
+- Use `useRouter`/`useSearchParams` only in Client Components.
+- Prefer `params` and `searchParams` passed into route components for server-side access.
+
+### Metadata
+- Use `generateMetadata` / route `metadata` export for SEO and social tags.
+- Keep metadata generation server-side; avoid client-side document mutation.
+
+### Assets & Images
+- Use `next/image` when appropriate and consistent with the project.
+- Prefer colocated route assets in `public/` following existing conventions.
+
+### Environment & Secrets
+- Never access server secrets from Client Components.
+- Respect Next.js env var rules (`NEXT_PUBLIC_` only for client-safe values).
+
+### Performance & Bundling
+- Avoid pulling large dependencies into Client Components.
+- Prefer dynamic import for truly heavy client-only code when it improves initial load.
+
+### Project Consistency
+- Follow existing conventions for folder structure, naming, and route organization.
+- Do not introduce alternative routing patterns or custom servers unless explicitly requested.
+
+---
+
+## Next.js (Pages Router only)
+
+### Routing & Structure
+- Use the `pages/` directory routing model; follow file-based routing conventions.
+- Keep page files thin; move UI into components and logic into services/hooks.
+- Avoid mixing App Router patterns (`app/`, Server Components, server actions) into a Pages Router project.
+
+### Data Fetching
+- Use the appropriate data method based on the use case:
+  - `getStaticProps` for static content
+  - `getServerSideProps` for request-time data
+  - `getStaticPaths` for dynamic SSG routes
+- Do not fetch the same data both in `get*Props` and again on the client unless required.
+- Keep data-fetch logic centralized (services or API layer), not embedded directly in pages.
+
+### Client vs Server Boundaries
+- Code inside `getServerSideProps` / `getStaticProps` runs server-side only.
+- Do not reference browser APIs (`window`, `document`) in server-side code.
+- Do not expose secrets or server-only values through props unintentionally.
+
+### API Routes
+- Use `pages/api/*` for backend endpoints.
+- Keep handlers thin; delegate business logic to shared service modules.
+- Return proper status codes and structured JSON responses.
+- Validate all external input.
+
+### Navigation
+- Use `next/link` for internal navigation.
+- Use `next/router` for client-side routing logic when necessary.
+- Avoid full page reloads for internal navigation.
+
+### Rendering Behavior
+- Prefer static generation when possible for performance.
+- Use server-side rendering only when data must be request-specific.
+- Avoid unnecessary client-side data fetching that duplicates server work.
+
+### Head & Metadata
+- Use `next/head` to manage page titles and meta tags.
+- Keep metadata logic inside the page component, not scattered across children.
+
+### Assets & Images
+- Follow existing conventions for static assets (`public/`).
+- Use `next/image` if the project already uses it; do not introduce it mid-project without consistency.
+
+### Environment & Configuration
+- Respect Next.js environment variable rules.
+- Only expose client-safe variables with the `NEXT_PUBLIC_` prefix.
+- Never leak secrets to the client through props or API responses.
+
+### Performance Awareness
+- Avoid importing large dependencies directly into pages if only needed client-side.
+- Use dynamic imports (`next/dynamic`) when it meaningfully reduces initial bundle size.
+
+### Project Consistency
+- Match existing folder structure, naming, and data-fetch patterns.
+- Do not introduce App Router features or custom server setups unless explicitly requested.
+
+---
+
+## Redux (addon only)
+
+### When to Use Redux
+- Use Redux only for genuinely shared, app-wide state that benefits from a centralized store.
+- Do not put ephemeral UI state in Redux (e.g., local input values, modal open flags) unless the project already does so consistently.
+
+### Redux Toolkit Defaults
+- Prefer Redux Toolkit (`@reduxjs/toolkit`) patterns over "classic" Redux.
+- Prefer `createSlice` for state + reducers.
+- Prefer `createAsyncThunk` (or RTK Query if the project uses it) for async flows; avoid hand-rolled action triplets.
+
+### State Shape & Normalization
+- Keep state normalized for collections (`{ ids: [], entities: {} }`) when dealing with lists of items.
+- Avoid deeply nested state that requires complex immutable updates.
+- Prefer storing IDs/references rather than duplicating full objects across slices.
+
+### Selectors
+- Use selectors as the primary read API for Redux state.
+- Prefer memoized selectors (`reselect` or RTK's `createSelector`) for derived data that would otherwise recompute frequently.
+- Keep selectors pure; no side effects.
+
+### Reducers & Immutability
+- Write reducers assuming Immer semantics (mutating "draft" is fine inside slices).
+- Keep reducers small and predictable; avoid mixing many concerns in a single reducer.
+
+### Side Effects
+- Keep side effects out of reducers.
+- Prefer thunks/RTK Query over custom middleware unless the project already has a strong middleware pattern.
+- Avoid complex thunk nesting; keep async flows readable and linear.
+
+### Components Integration
+- Prefer `useSelector` + `useDispatch` hooks for React integration.
+- Keep `useSelector` reads narrow (select only what's needed) to reduce rerenders.
+- Avoid selecting large objects when a few primitives will do.
+
+### Actions & Events
+- Prefer domain/event-style actions (`userLoggedIn`, `itemUpdated`) over UI-driven names.
+- Avoid exporting many internal action creators; expose the slice actions and selectors as the module API.
+
+### Consistency
+- Match existing folder conventions (feature slices vs layered store folders).
+- Do not reorganize the store structure unless explicitly requested.
+
+---
+
+## Zustand (addon only)
+
+### When to Use Zustand
+- Use Zustand for shared client state that doesn't justify Redux-level structure.
+- Keep local UI state in components unless multiple distant components truly need it.
+
+### Store Design
+- Prefer multiple small stores (by domain/feature) over one global mega-store.
+- Keep store shape flat and simple; avoid deeply nested objects that are hard to update immutably.
+- Define clear "actions" on the store for all mutations; avoid ad-hoc `set` scattered across the codebase.
+
+### Selectors & Rerenders
+- Always select the smallest slice of state needed in components.
+- Prefer selector functions over reading the whole store.
+- Use `shallow` comparison when selecting objects/arrays to reduce unnecessary rerenders (when the project already uses it).
+
+### Derived State
+- Prefer deriving values in selectors rather than storing redundant/derived fields.
+- If derived values are expensive, compute via memoized selectors (or project pattern) rather than persisting duplicated state.
+
+### Async & Side Effects
+- Keep async actions inside store actions or dedicated service functions, consistent with the project.
+- Handle in-flight / error state explicitly if the store owns the async workflow.
+- Avoid mixing network-fetch caching into Zustand unless the project explicitly uses it that way.
+
+### Persistence & Middleware
+- Use middleware (`persist`, `subscribeWithSelector`, etc.) only when needed and consistent with the project.
+- When persisting, whitelist specific fields; avoid persisting volatile or sensitive state.
+
+### Immutability & Updates
+- For object updates, prefer functional updates (`set(state => ...)`) when next depends on previous.
+- Avoid mutating nested objects in place unless you're using an Immer middleware and it's the established pattern.
+
+### Testing/Debuggability Considerations
+- Keep actions named and deterministic so devtools traces are meaningful (if devtools middleware is used).
+- Avoid storing non-serializable values unless required (DOM nodes, class instances, etc.).
+
+### Consistency
+- Match existing conventions for store naming (`useXStore`), file layout, and exports.
+- Do not introduce new middleware patterns unless explicitly requested.
+
+---
+
+## TanStack Query (addon only)
+
+### When to Use TanStack Query
+- Use TanStack Query for **server state** (data that lives on the server).
+- Do not use it for local UI state or client-only state.
+- Treat the cache as the source of truth for server data; avoid duplicating it in local state.
+
+### Query Keys
+- Use stable, structured query keys (arrays, not strings).
+- Include all parameters that affect the request in the key.
+- Keep key structure consistent across the project.
+
+### Data Fetching
+- Keep query functions pure and focused on fetching data.
+- Move request logic into shared API/service functions rather than inline in components.
+- Avoid duplicate queries for the same resource; reuse query keys.
+
+### Mutations
+- Use `useMutation` for server-side writes.
+- After mutations, update cache intentionally:
+  - Prefer `invalidateQueries` for correctness.
+  - Use `setQueryData` only when the update is simple and deterministic.
+- Avoid refetch storms by invalidating only the necessary keys.
+
+### Cache & Freshness
+- Respect existing `staleTime` and `cacheTime` patterns.
+- Do not globally disable caching or force refetching without a clear reason.
+- Prefer increasing `staleTime` over excessive refetching when data is relatively stable.
+
+### Component Integration
+- Keep components focused on rendering; avoid embedding fetch logic beyond calling hooks.
+- Do not wrap query data in additional local state unless transformation requires it.
+- Handle loading and error states explicitly and consistently with project patterns.
+
+### Derived Data
+- Prefer the `select` option for lightweight data transformation instead of computing in render.
+- Keep transformations inexpensive and pure.
+
+### Performance
+- Avoid creating new query keys or options objects on every render unless necessary.
+- Use conditional queries (`enabled`) instead of manual guards inside fetch functions.
+
+### Pagination & Infinite Data
+- Follow existing project patterns for pagination or infinite queries.
+- Keep page parameters in query keys or query state, not external component state.
+
+### Consistency
+- Match existing conventions for query key structure, hook naming, and service layer usage.
+- Do not introduce alternative data-fetching libraries or caching layers unless explicitly requested.
+
+---
+
+## Apollo Client (addon only)
+
+### When to Use Apollo
+- Use Apollo for **GraphQL server state** only.
+- Do not use Apollo cache for local UI state unless the project explicitly does so.
+- Treat the Apollo cache as the source of truth for GraphQL data; avoid duplicating it in component state.
+
+### Queries
+- Keep queries colocated with the feature or component that owns the data.
+- Fetch only the fields that are actually used; avoid overfetching.
+- Prefer fragments for shared field selections to keep queries consistent.
+- Keep query documents static; avoid building queries dynamically at runtime.
+
+### Mutations
+- Use `useMutation` for server writes.
+- After mutations, update the cache intentionally:
+  - Prefer `refetchQueries` when correctness is more important than optimization.
+  - Use `cache.modify` or `writeQuery` only when the update is simple and predictable.
+- Avoid broad or unnecessary refetching.
+
+### Cache Design
+- Ensure entities have stable identifiers (`id` / `__typename`) so normalization works correctly.
+- Avoid storing derived or duplicated data in the cache.
+- Respect existing cache configuration (type policies, field policies, merge strategies).
+
+### Component Integration
+- Do not wrap query results in local state unless transformation or UI-only state requires it.
+- Handle loading and error states explicitly and consistently with project patterns.
+- Keep components focused on rendering; move data transformation into `select`-style helpers or fragments when possible.
+
+### Pagination & Lists
+- Follow existing pagination patterns (cursor/offset and associated cache policies).
+- Do not implement manual list merging if the project already defines type policy merge functions.
+
+### Performance
+- Avoid triggering unnecessary re-renders by keeping variables stable.
+- Do not create new options/variables objects on every render unless values actually change.
+- Use `skip` or conditional variables instead of running queries that immediately no-op.
+
+### Consistency
+- Match existing conventions for query placement, fragment usage, and cache update patterns.
+- Do not introduce alternative GraphQL clients or parallel caching layers unless explicitly requested.
+
+---
+
+## Tailwind CSS (addon only)
+
+### Utility-First Defaults
+- Prefer Tailwind utilities over bespoke CSS when Tailwind is the chosen system.
+- Do not add new custom CSS classes for things Tailwind can express cleanly.
+- If a style repeats often, prefer extracting with existing patterns:
+  - `@apply` only if the project already uses it
+  - otherwise use component-level abstractions (shared components), not global "utility" classes.
+
+### Class Organization
+- Keep class lists readable:
+  - group by concern (layout → spacing → typography → colors → effects → state)
+  - avoid random ordering
+- Avoid duplicative/conflicting utilities (e.g., multiple `p-*` or `text-*` fighting each other) unless intentional.
+
+### Responsiveness
+- Use existing breakpoint conventions.
+- Start mobile-first; add responsive variants only where needed.
+- Avoid sprinkling many breakpoints on a single element unless it's truly required.
+
+### States & Variants
+- Use Tailwind variants (`hover:`, `focus:`, `disabled:`, `group-hover:`, etc.) instead of custom CSS.
+- Preserve visible focus styles; use `focus-visible:` patterns when appropriate.
+- Prefer `aria-*` / `data-*` variant patterns only if the project already uses them.
+
+### Theming & Tokens
+- Prefer project tokens (theme colors, spacing scale) over arbitrary values.
+- Avoid arbitrary values (`[... ]`) unless there's no suitable token.
+- Do not introduce new colors/sizing scales unless explicitly requested.
+
+### Layout Patterns
+- Prefer `flex`/`grid` utilities over manual positioning hacks.
+- Avoid fixed heights/widths unless necessary; prefer responsive sizing (`w-full`, `max-w-*`, etc.).
+
+### Composition & Reuse
+- Prefer building reusable UI via components rather than copying large Tailwind class strings everywhere.
+- If a class list becomes unwieldy, follow the project's established approach (e.g., `clsx`, `cva`, `tailwind-merge`)—do not introduce a new one.
+
+### Consistency
+- Match the repo's Tailwind conventions (plugins, typography/forms, container strategy).
+- Do not change Tailwind config unless explicitly requested.
+
+---
+
+## CSS Modules (addon only)
+
+### Scoping & Ownership
+- Treat each `*.module.css` file as owned by its component/feature.
+- Keep styles local; avoid "global" styling patterns inside CSS Modules unless the project explicitly supports them.
+- Do not create catch-all utility modules; prefer component-level ownership.
+
+### Naming
+- Use clear, component-oriented class names:
+  - `root`, `container`, `header`, `title`, `content`, `actions`, etc.
+- Avoid overly generic names that encourage cross-component reuse (`.button`, `.card`) unless the module is explicitly shared.
+- Prefer `isX` / `hasX` / `variantX` conventions for state/variants if that's consistent with the codebase.
+
+### Composition
+- Prefer composing UI via components rather than composing many classes.
+- Use `composes:` only if the project already uses it and has a consistent convention.
+
+### Variants & State
+- Prefer explicit variant classes (`.primary`, `.danger`, `.compact`) over highly specific selectors.
+- Keep selectors shallow; avoid deep descendant chains even inside modules.
+- Avoid encoding complex state in selector specificity; prefer toggling classes.
+
+### Global Escapes
+- Avoid `:global(...)` except for:
+  - integrating with third-party markup you don't control
+  - targeting a known global wrapper/class required by the app
+- If `:global` is necessary, keep it narrowly scoped and documented.
+
+### Interop with Component Code
+- Keep the mapping from component state → class names explicit and readable.
+- Avoid dynamic string concatenation for class names if the project uses a helper (`clsx`, etc.); follow existing patterns.
+
+### File Hygiene
+- Keep module files small; delete unused classes when touched.
+- Avoid duplicating identical styles across many modules; prefer shared components or existing design tokens/utilities.
+
+### Consistency
+- Match the project's module naming, file placement, and conventions.
+- Do not introduce new build tooling or naming conventions unless explicitly requested.
+
+---
+
+## styled-components (addon only)
+
+### Component-Level Styling
+- Prefer one styled component per UI element rather than large, multi-purpose styled wrappers.
+- Keep styled components close to the component that owns them unless they are clearly shared.
+- Avoid creating generic global styled components unless the project already uses a design-system pattern.
+
+### Styling Approach
+- Keep styles simple and readable; avoid deeply nested selectors.
+- Prefer styling the component directly rather than targeting child elements with complex selectors.
+- Avoid styling by element type (`div`, `span`) when a styled component name communicates intent.
+
+### Props & Variants
+- Use props for visual variants (`$variant`, `$size`, etc.) rather than creating many separate styled components.
+- Prefix styling-only props with `$` (or follow project convention) to avoid leaking them to the DOM.
+- Keep variant logic simple; avoid large conditional blocks inside styled templates.
+
+### Theming
+- Use the existing theme (`props.theme`) for colors, spacing, and typography.
+- Do not introduce new hardcoded design values if theme tokens exist.
+- Do not modify the theme structure unless explicitly requested.
+
+### Dynamic Styles
+- Avoid heavy runtime style computation.
+- Prefer simple conditional styles over complex functions or object-building inside template literals.
+- Avoid generating new styled components inside render functions.
+
+### Performance
+- Define styled components outside of component render functions.
+- Avoid excessive prop-driven re-styling that causes frequent class regeneration.
+- Do not create styled components dynamically per render.
+
+### Global Styles
+- Use `createGlobalStyle` only if the project already uses global styled patterns.
+- Avoid adding new global styles unless explicitly required.
+
+### Consistency
+- Match existing naming conventions, file placement, and organization.
+- Do not introduce additional styling libraries or mixed styling approaches unless explicitly requested.
+
+---
+
+## Sass / SCSS (addon only)
+
+### Scope & Usage
+- Use Sass features only where they improve clarity or reuse.
+- Do not introduce Sass-specific patterns if the project primarily uses plain CSS.
+- Avoid overengineering with mixins/functions for simple styles.
+
+### Nesting
+- Keep nesting shallow (max 2–3 levels).
+- Avoid deep selector pyramids that increase specificity and reduce maintainability.
+- Do not nest for structure alone—nest only when there is a real parent-child relationship.
+
+### Variables
+- Prefer existing design tokens or variables; do not introduce new global variables unless necessary.
+- Keep variable scope as local as possible.
+- Avoid duplicating values that already exist in theme/config files.
+
+### Mixins & Functions
+- Use mixins for true reuse (e.g., cross-browser patterns, repeated complex styles).
+- Avoid creating mixins for simple one-line utilities.
+- Keep mixins small and predictable; avoid hidden side effects.
+- Prefer arguments over hardcoded values.
+
+### Partials & Imports
+- Follow the project's structure for partials (`_file.scss`) and imports.
+- Avoid circular imports.
+- Do not reorganize the Sass architecture unless explicitly requested.
+
+### Performance & Output
+- Avoid generating large amounts of redundant CSS via loops or overly broad mixins.
+- Be mindful of selector duplication and output size.
+
+### Modern Practices
+- Prefer `@use` / `@forward` if the project uses modern Sass modules.
+- Do not introduce legacy `@import` if the project has migrated to the module system.
+
+### Consistency
+- Match the project's naming, file organization, and Sass conventions.
+- Do not introduce additional CSS frameworks or change the build pipeline unless explicitly requested.
+
+---
+
+## React Native (framework only)
+
+### Platform Mental Model
+- Treat iOS and Android as different platforms; don't assume behavior matches.
+- Prefer cross-platform primitives first; use platform-specific code only when necessary and scoped.
+
+### Components & Layout
+- Use `View`, `Text`, `Pressable`, `ScrollView`, `FlatList/SectionList` appropriately; avoid generic wrappers.
+- Prefer Flexbox layout; avoid hard-coded pixel dimensions unless required.
+- Use `SafeAreaView` (or the project's safe-area solution) for top-level screens where needed.
+- Avoid deeply nested `ScrollView`s; prefer list components for large/virtualized content.
+
+### Lists & Performance
+- Use `FlatList`/`SectionList` for long lists; avoid mapping large arrays into `ScrollView`.
+- Provide stable keys; avoid index keys unless the list is truly static.
+- Use `getItemLayout`, `initialNumToRender`, and other perf options only when there's evidence of issues.
+
+### State & Effects
+- Keep side effects in hooks with correct dependencies; avoid hidden re-run loops.
+- Avoid storing derived values in state.
+- Prefer event-driven updates over "sync effects."
+
+### Touch & Gestures
+- Prefer `Pressable` for touch interactions.
+- Ensure hit targets are reasonable; avoid tiny touch areas.
+- Follow the project's gesture/navigation approach; do not introduce new gesture systems.
+
+### Navigation
+- Follow the existing navigation library and patterns (e.g., React Navigation).
+- Keep screens thin; move reusable UI into components and shared logic into hooks/services.
+- Avoid mixing navigation paradigms (stack/tab/drawer) unless the project already does so.
+
+### Styling
+- Follow the project's styling approach (StyleSheet, styled, utility styles, etc.).
+- Prefer `StyleSheet.create` for stable styles if that's the established pattern.
+- Avoid inline style objects in frequently rendered components when it causes churn.
+
+### Native Modules & Platform APIs
+- Prefer existing libraries already in the repo for native capabilities.
+- Avoid adding native modules unless explicitly requested.
+- Keep platform-specific code isolated (`Platform.select`, `.ios.ts`, `.android.ts`) and minimal.
+
+### Accessibility
+- Use `accessibilityLabel`, `accessibilityRole`, and related props for interactive elements.
+- Ensure focus order and screen reader behavior are reasonable for custom components.
+
+### Consistency
+- Match existing project conventions for folder structure, screen/component naming, and platform overrides.
+- Do not introduce Expo-specific patterns into a bare RN project (or vice versa) unless explicitly requested.
