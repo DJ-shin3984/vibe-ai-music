@@ -53,3 +53,4 @@ Reviews deliverables as the **Review & Analysis** agent using project rules (fro
 - [ ] Each issue has priority and concrete suggestion
 - [ ] Critical items clearly separated
 - [ ] No auth/security changes suggested without user approval
+- [ ] TypeScript: extended component props declare all destructured props (avoids "Property 'X' does not exist" build failures)

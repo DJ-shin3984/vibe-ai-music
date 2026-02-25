@@ -10,6 +10,7 @@ const config: Config = {
       fontFamily: {
         syne: ["var(--font-syne)", "sans-serif"],
         handwriting: ["var(--font-handwriting)", "cursive"],
+        display: ["var(--font-display)", "sans-serif"],
       },
     },
   },

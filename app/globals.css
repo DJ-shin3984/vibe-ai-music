@@ -93,3 +93,33 @@
   outline: none;
   box-shadow: 4px 4px 8px #454545, -4px -4px 8px #7c736e, 0 0 0 2px rgba(255, 255, 255, 0.4);
 }
+
+/* Background gradient animation blobs */
+@keyframes bg-blob-first {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(30px, -50px) scale(1.1); }
+  66% { transform: translate(-20px, 20px) scale(0.9); }
+}
+@keyframes bg-blob-second {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(-40px, 30px) scale(1.05); }
+  66% { transform: translate(30px, 10px) scale(0.95); }
+}
+@keyframes bg-blob-third {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(20px, 40px) scale(0.9); }
+  66% { transform: translate(-30px, -20px) scale(1.1); }
+}
+@keyframes bg-blob-fourth {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(-10px, -30px) scale(1.05); }
+}
+@keyframes bg-blob-fifth {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(20px, 20px) scale(0.95); }
+}
+.animate-bg-blob-first { animation: bg-blob-first 8s ease-in-out infinite; }
+.animate-bg-blob-second { animation: bg-blob-second 10s ease-in-out infinite; }
+.animate-bg-blob-third { animation: bg-blob-third 12s ease-in-out infinite; }
+.animate-bg-blob-fourth { animation: bg-blob-fourth 9s ease-in-out infinite; }
+.animate-bg-blob-fifth { animation: bg-blob-fifth 11s ease-in-out infinite; }

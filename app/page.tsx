@@ -1,4 +1,9 @@
 import { Hero } from "@/components/Hero";
+import { LandingMusicSection } from "@/components/LandingMusicSection";
+import { FeatureSection } from "@/components/FeatureSection";
+import { PricingSection } from "@/components/PricingSection";
+import { CTASection } from "@/components/CTASection";
+import { Footer } from "@/components/Footer";
 
 export default function Home() {
   return (
@@ -9,6 +14,11 @@ export default function Home() {
         ctaLabel="시작하기"
         ctaHref="/auth"
       />
+      <LandingMusicSection />
+      <FeatureSection />
+      <PricingSection />
+      <CTASection />
+      <Footer />
     </main>
   );
 }

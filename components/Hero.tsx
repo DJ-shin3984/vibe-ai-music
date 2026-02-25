@@ -42,7 +42,7 @@ export function Hero({
           />
           <div
             aria-hidden
-            className="absolute inset-0 h-full w-full bg-black [mask-image:radial-gradient(220px_140px_at_top,transparent_20%,white)] sm:[mask-image:radial-gradient(280px_180px_at_top,transparent_20%,white)] md:[mask-image:radial-gradient(350px_200px_at_top,transparent_20%,white)]"
+            className="absolute inset-0 h-full w-full bg-black [mask-image:radial-gradient(220px_120px_at_50%_30%,transparent_30%,white)] sm:[mask-image:radial-gradient(280px_160px_at_50%_30%,transparent_30%,white)] md:[mask-image:radial-gradient(350px_200px_at_50%_30%,transparent_30%,white)]"
           />
           <h1
             id="hero-title"

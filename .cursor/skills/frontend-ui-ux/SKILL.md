@@ -33,3 +33,4 @@ Implements frontend work as the **Frontend UI/UX Expert** agent, following `.cur
 - [ ] Focus visibility preserved
 - [ ] Existing styling/component conventions followed
 - [ ] No new libraries added without approval
+- [ ] TypeScript: every prop destructured in a component is declared in its props type (e.g. when extending `ComponentProps<typeof X>`, add custom props like `className` to the intersection type or a named type alias)

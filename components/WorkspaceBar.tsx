@@ -3,7 +3,9 @@
 import { useRef, useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { Star } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
+import { CreditModal } from "@/components/ui/credit-modal";
 
 /**
  * Workspace 전용 상단 바. Liquid Glass 스타일.
@@ -15,10 +17,12 @@ export function WorkspaceBar() {
   const searchParams = useSearchParams();
   const { user, signOut } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [creditModalOpen, setCreditModalOpen] = useState(false);
   const [searchValue, setSearchValue] = useState(() =>
     searchParams.get("q") ?? ""
   );
   const menuRef = useRef<HTMLDivElement>(null);
+  const leaveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     setSearchValue(searchParams.get("q") ?? "");
@@ -35,6 +39,18 @@ export function WorkspaceBar() {
       return () => document.removeEventListener("click", handleClickOutside);
     }
   }, [menuOpen]);
+
+  const handleMenuMouseEnter = () => {
+    if (leaveTimeoutRef.current) {
+      clearTimeout(leaveTimeoutRef.current);
+      leaveTimeoutRef.current = null;
+    }
+    setMenuOpen(true);
+  };
+
+  const handleMenuMouseLeave = () => {
+    leaveTimeoutRef.current = setTimeout(() => setMenuOpen(false), 120);
+  };
 
   useEffect(() => {
     function handleEscape(e: KeyboardEvent) {
@@ -101,7 +117,12 @@ export function WorkspaceBar() {
           />
         </div>
 
-        <div className="relative shrink-0" ref={menuRef}>
+        <div
+          className="relative shrink-0"
+          ref={menuRef}
+          onMouseEnter={handleMenuMouseEnter}
+          onMouseLeave={handleMenuMouseLeave}
+        >
           <button
             type="button"
             onClick={() => setMenuOpen((prev) => !prev)}
@@ -150,9 +171,22 @@ export function WorkspaceBar() {
               role="menuitem"
               onClick={() => {
                 setMenuOpen(false);
+                setCreditModalOpen(true);
+              }}
+              className="flex w-full items-center gap-2 px-4 py-2.5 text-left text-sm font-medium text-white/90 outline-none transition-colors hover:bg-white/10 focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:ring-inset"
+              aria-label="크레딧 결제 모달 열기"
+            >
+              <Star className="h-4 w-4 shrink-0" aria-hidden />
+              Upgrade
+            </button>
+            <button
+              type="button"
+              role="menuitem"
+              onClick={() => {
+                setMenuOpen(false);
                 signOut();
               }}
-              className="w-full px-4 py-2.5 text-left text-sm font-medium text-white/90 outline-none transition-colors hover:bg-white/10 focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:ring-inset"
+              className="flex w-full items-center gap-2 px-4 py-2.5 text-left text-sm font-medium text-white/90 outline-none transition-colors hover:bg-white/10 focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:ring-inset"
               aria-label="로그아웃"
             >
               로그아웃
@@ -160,6 +194,8 @@ export function WorkspaceBar() {
           </div>
         </div>
       </div>
+
+      <CreditModal open={creditModalOpen} onClose={() => setCreditModalOpen(false)} />
     </header>
   );
 }

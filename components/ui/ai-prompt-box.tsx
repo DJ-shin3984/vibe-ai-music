@@ -375,13 +375,20 @@ const PromptInputActions: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({
   ...props
 }) => <div className={cn("flex items-center gap-2", className)} {...props}> {children} </div>;
 
-const PromptInputAction: React.FC<
-  React.ComponentProps<typeof Tooltip> & {
-    tooltip: React.ReactNode;
-    children: React.ReactNode;
-    side?: "top" | "bottom" | "left" | "right";
-  }
-> = ({ tooltip, children, className, side = "top", ...props }) => {
+type PromptInputActionProps = React.ComponentProps<typeof Tooltip> & {
+  tooltip: React.ReactNode;
+  children: React.ReactNode;
+  side?: "top" | "bottom" | "left" | "right";
+  className?: string;
+};
+
+const PromptInputAction: React.FC<PromptInputActionProps> = ({
+  tooltip,
+  children,
+  className,
+  side = "top",
+  ...props
+}) => {
   const { disabled } = usePromptInput();
   return (
     <Tooltip {...props}>
