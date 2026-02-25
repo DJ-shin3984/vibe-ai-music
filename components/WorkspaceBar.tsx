@@ -2,6 +2,7 @@
 
 import { useRef, useEffect, useState } from "react";
 import Link from "next/link";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 
 /**
@@ -9,9 +10,19 @@ import { useAuth } from "@/context/AuthContext";
  * 왼쪽 로고, 중앙 검색창(기능 없음), 우측 프로필(아바타 + 클릭 시 로그아웃 메뉴).
  */
 export function WorkspaceBar() {
+  const pathname = usePathname();
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const { user, signOut } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [searchValue, setSearchValue] = useState(() =>
+    searchParams.get("q") ?? ""
+  );
   const menuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setSearchValue(searchParams.get("q") ?? "");
+  }, [searchParams]);
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
@@ -54,22 +65,35 @@ export function WorkspaceBar() {
     >
       <div className="mx-auto flex h-14 max-w-6xl items-center justify-between gap-4 px-4 sm:h-16 sm:px-6">
         <Link
-          href="/workspace"
+          href="/"
           className="font-handwriting shrink-0 text-lg font-semibold text-white outline-none focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:ring-offset-2 focus-visible:ring-offset-[#171717] sm:text-xl"
-          aria-label="Vibe AI Music 워크스페이스"
+          aria-label="Vibe AI Music 홈으로 이동"
         >
           Vibe AI Music
         </Link>
 
         <div className="flex min-w-0 flex-1 justify-center px-4">
           <label htmlFor="workspace-search" className="sr-only">
-            검색
+            플레이리스트 제목 검색
           </label>
           <input
             id="workspace-search"
             type="search"
-            placeholder="검색"
-            aria-label="검색"
+            placeholder="플레이리스트 제목 검색"
+            aria-label="플레이리스트 제목 검색"
+            value={searchValue}
+            onChange={(e) => {
+              const v = e.target.value;
+              setSearchValue(v);
+              const params = new URLSearchParams(searchParams.toString());
+              const trimmed = v.trim();
+              if (trimmed) params.set("q", trimmed);
+              else params.delete("q");
+              const query = params.toString();
+              router.replace(pathname + (query ? `?${query}` : ""), {
+                scroll: false,
+              });
+            }}
             className="w-full max-w-md rounded-xl border border-white/[0.12] bg-white/[0.06] px-4 py-2.5 text-sm text-white placeholder:text-white/50 outline-none backdrop-blur-sm transition-colors focus:border-white/20 focus:ring-2 focus:ring-white/20"
             style={{
               boxShadow: "0 2px 12px rgba(0,0,0,0.12)",
