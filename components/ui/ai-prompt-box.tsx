@@ -441,7 +441,9 @@ export const PromptInputBox = React.forwardRef<HTMLDivElement, PromptInputBoxPro
       const styleSheet = document.createElement("style");
       styleSheet.innerText = PROMPT_BOX_STYLES;
       document.head.appendChild(styleSheet);
-      return () => document.head.removeChild(styleSheet);
+      return () => {
+        document.head.removeChild(styleSheet);
+      };
     }, []);
 
     const handleToggle = (value: string) => {
