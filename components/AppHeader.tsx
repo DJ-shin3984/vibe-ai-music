@@ -28,7 +28,9 @@ export function AppHeader() {
     }
     if (menuOpen) {
       document.addEventListener("click", handleClickOutside);
-      return () => document.removeEventListener("click", handleClickOutside);
+      return () => {
+        document.removeEventListener("click", handleClickOutside);
+      };
     }
   }, [menuOpen]);
 
@@ -49,7 +51,9 @@ export function AppHeader() {
       if (e.key === "Escape") setMenuOpen(false);
     }
     document.addEventListener("keydown", handleEscape);
-    return () => document.removeEventListener("keydown", handleEscape);
+    return () => {
+      document.removeEventListener("keydown", handleEscape);
+    };
   }, []);
 
   const ringOffset = isAuthPage ? "focus-visible:ring-offset-[#171717]" : "focus-visible:ring-offset-black";

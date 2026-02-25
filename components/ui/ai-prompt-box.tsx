@@ -494,7 +494,9 @@ export const PromptInputBox = React.forwardRef<HTMLDivElement, PromptInputBoxPro
         }
       };
       document.addEventListener("paste", onPaste);
-      return () => document.removeEventListener("paste", onPaste);
+      return () => {
+        document.removeEventListener("paste", onPaste);
+      };
     }, []);
 
     const handleSubmit = () => {

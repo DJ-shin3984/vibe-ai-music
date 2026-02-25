@@ -88,7 +88,9 @@ export default function WorkspacePage() {
     const onCanPlay = () => el.play().catch(() => {});
     el.addEventListener("canplay", onCanPlay);
     if (el.readyState >= 2) el.play().catch(() => {});
-    return () => el.removeEventListener("canplay", onCanPlay);
+    return () => {
+      el.removeEventListener("canplay", onCanPlay);
+    };
   }, [currentPlaybackUrl, selectedMusicId]);
 
   useEffect(() => {

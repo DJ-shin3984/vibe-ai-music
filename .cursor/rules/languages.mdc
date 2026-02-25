@@ -12,7 +12,7 @@ alwaysApply: false
 ### Type Safety Defaults (타입 안전성 기본)
 - Assume `strict` TypeScript. Do not weaken compiler options to "make it work."
 - Avoid `any`. Prefer `unknown` + narrowing, or generics with constraints.
-- Use `as` casts only as a last resort; prefer real type guards and runtime checks.
+- Use `as` casts only as a last resort; prefer real type guards and runtime checks. When the compiler says "may be a mistake because neither type sufficiently overlaps", cast via `unknown` first (e.g. `x as unknown as TargetType`).
 - Prefer `satisfies` over `as` when validating object shapes without widening types.
 - Prefer explicit return types for exported functions and public APIs.
 
@@ -26,6 +26,9 @@ alwaysApply: false
 - Use `import type { ... }` for type-only imports to avoid runtime side effects and keep bundles clean.
 - Keep ESM/CJS consistent with the repo. Don't mix patterns without a clear reason.
 - Avoid implicit "barrel" imports that create cycles; prefer direct imports when boundaries matter.
+
+### Effect Cleanup (useEffect 클린업)
+- `useEffect` cleanup must return `void | Destructor` (i.e. return nothing or a function that returns void). If the cleanup calls a function that returns a value (e.g. `removeChild`, `unsubscribe()`), use a block body so the return value is not used: `return () => { node.removeChild(child); };` not `return () => node.removeChild(child);`.
 
 ### Error-Prone Areas (오류 취약 구간)
 - Don't use `@ts-ignore` or `@ts-nocheck`. If absolutely unavoidable, use `@ts-expect-error` with a short reason.

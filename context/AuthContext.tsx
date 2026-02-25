@@ -54,7 +54,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       updateState(session);
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      subscription.unsubscribe();
+    };
   }, [supabase.auth, updateState]);
 
   const signOut = useCallback(async () => {

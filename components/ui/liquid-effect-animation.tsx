@@ -38,7 +38,7 @@ export function LiquidEffectAnimation({ contained = false }: LiquidEffectAnimati
     document.body.appendChild(script);
 
     return () => {
-      const app = (window as Window & Record<string, unknown>)[`__liquidApp_${id}`];
+      const app = (window as unknown as Record<string, unknown>)[`__liquidApp_${id}`];
       if (app && typeof (app as { dispose?: () => void }).dispose === "function") {
         (app as { dispose: () => void }).dispose();
       }

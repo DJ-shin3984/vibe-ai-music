@@ -36,7 +36,9 @@ export function WorkspaceBar() {
     }
     if (menuOpen) {
       document.addEventListener("click", handleClickOutside);
-      return () => document.removeEventListener("click", handleClickOutside);
+      return () => {
+        document.removeEventListener("click", handleClickOutside);
+      };
     }
   }, [menuOpen]);
 
@@ -57,7 +59,9 @@ export function WorkspaceBar() {
       if (e.key === "Escape") setMenuOpen(false);
     }
     document.addEventListener("keydown", handleEscape);
-    return () => document.removeEventListener("keydown", handleEscape);
+    return () => {
+      document.removeEventListener("keydown", handleEscape);
+    };
   }, []);
 
   const avatarUrl =
