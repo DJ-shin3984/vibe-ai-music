@@ -7,17 +7,12 @@ export const metadata: Metadata = {
 };
 
 /**
- * 불꽃놀이 페이지. 전역 헤더 아래 영역을 꽉 채우며 반응형으로 표시됨.
+ * 불꽃놀이 페이지. 캔버스는 fixed로 100dvh 전체를 사용.
  */
 export default function FireworkPage() {
   return (
-    <main
-      className="flex min-h-0 flex-1 flex-col w-full overflow-hidden"
-      aria-label="불꽃놀이"
-    >
-      <div className="flex min-h-0 flex-1 w-full">
-        <FireworkCanvas />
-      </div>
+    <main className="w-full flex-1" aria-label="불꽃놀이">
+      <FireworkCanvas />
     </main>
   );
 }
