@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Ultimate Fireworks Finale 🎆</title>
+<style>
+html,body{margin:0;padding:0;overflow:hidden;background:#000;height:100%;touch-action:manipulation;font-family:system-ui}
+#hint{position:fixed;top:18px;width:100%;text-align:center;color:#fff;opacity:.8;pointer-events:none}
+canvas{display:block}
+</style>
+</head>
+<body>
+<div id="hint">터치하면 현실 물리 불꽃놀이 🎆</div>
+<canvas id="canvas"></canvas>
+<script>
+const canvas=document.getElementById('canvas');
+const ctx=canvas.getContext('2d');
+
+function resize(){canvas.width=innerWidth;canvas.height=innerHeight;createStars()}
+addEventListener('resize',resize);
+
+// ===== Stars =====
+const stars=[];
+function createStars(){
+ stars.length=0;
+ for(let i=0;i<160;i++){
+  stars.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,size:Math.random()*1.5});
+ }
+}
+resize();
+
+const rockets=[];
+const trails=[];
+const particles=[];
+
+// ===== Flash Effect =====
+let flashAlpha=0;
+
+// ===== Audio System =====
+const audioCtx=new (window.AudioContext||window.webkitAudioContext)();
+
+let startBuffer=null;
+let boomBuffer=null;
+
+async function loadSound(url){
+ try{
+  const r=await fetch(url);
+  if(!r.ok) throw new Error('fetch fail '+url);
+  const b=await r.arrayBuffer();
+  return await audioCtx.decodeAudioData(b);
+ }catch(e){
+  console.warn('Audio load failed:',url,e);
+  return null;
+ }
+}
+
+loadSound('start.mp3').then(b=>startBuffer=b);
+loadSound('boom.mp3').then(b=>boomBuffer=b);
+
+const startFallback=new Audio('start.mp3');
+const boomFallback=new Audio('boom.mp3');
+
+function distanceVolume(y){
+ const dist=y/canvas.height;
+ return Math.max(.2,1-dist);
+}
+
+// ===== START SOUND (FIXED SYNTAX) =====
+
+
+function playStart(y){
+ const vol=distanceVolume(y);
+
+ // 터치 순간 즉시 AudioContext 활성화
+ if(audioCtx.state==='suspended'){
+  audioCtx.resume();
+ }
+
+ // ✅ 초즉발 start — HTMLAudio 먼저 즉시 재생 (가장 빠름)
+ const instant=startFallback.cloneNode();
+ instant.currentTime=0;
+ instant.volume=vol;
+ instant.play().catch(()=>{});
+
+ // ✅ 동시에 WebAudio 버전도 재생 (더 좋은 공간감)
+ if(startBuffer){
+  try{
+   const src=audioCtx.createBufferSource();
+   src.buffer=startBuffer;
+
+   const gain=audioCtx.createGain();
+   gain.gain.value=vol;
+
+   src.connect(gain).connect(audioCtx.destination);
+
+   src.start(audioCtx.currentTime);
+  }catch(e){
+   console.warn('startBuffer play fail',e);
+  }
+ }
+}
+
+function playBoom(y){
+ const vol=distanceVolume(y);
+ const delayTime=(canvas.height-y)/canvas.height*0.45;
+
+ if(boomBuffer){
+  const src=audioCtx.createBufferSource();
+  src.buffer=boomBuffer;
+
+  const gain=audioCtx.createGain();
+  gain.gain.value=vol;
+
+  const delay=audioCtx.createDelay();
+  delay.delayTime.value=.28;
+
+  const feedback=audioCtx.createGain();
+  feedback.gain.value=.35;
+
+  delay.connect(feedback);
+  feedback.connect(delay);
+
+  src.connect(gain);
+  gain.connect(audioCtx.destination);
+  gain.connect(delay);
+  delay.connect(audioCtx.destination);
+
+  src.start(audioCtx.currentTime+delayTime);
+ }else{
+  setTimeout(()=>{
+   const a=boomFallback.cloneNode();
+   a.volume=vol;
+   a.play().catch(()=>{});
+  },delayTime*1000);
+ }
+}
+
+// ===== Rocket =====
+class Rocket{
+ constructor(x,targetY){
+  this.x=x;
+  this.y=canvas.height;
+  this.targetY=targetY;
+  this.vy=-11-Math.random()*3;
+  this.sparkTimer=0;
+  this.exploded=false;
+ }
+
+ update(){
+  this.y+=this.vy;
+  this.sparkTimer++;
+
+  if(this.sparkTimer%2===0){trails.push(new Trail(this.x,this.y));}
+
+  if(this.y<=this.targetY&&!this.exploded){
+   this.exploded=true;
+   explode(this.x,this.y);
+  }
+ }
+
+ draw(){ctx.fillStyle='#fff';ctx.fillRect(this.x-1,this.y-12,2,12)}
+}
+
+class Trail{
+ constructor(x,y){this.x=x+(Math.random()-.5)*4;this.y=y;this.life=28;this.size=Math.random()*2+1}
+ update(){this.y+=.6;this.life--}
+ draw(){ctx.fillStyle=`rgba(255,200,120,${this.life/28})`;ctx.beginPath();ctx.arc(this.x,this.y,this.size,0,6.28);ctx.fill()}
+}
+
+// ===== Particle =====
+class Particle{
+ constructor(x,y,hue){
+  const a=Math.random()*6.28;
+  const s=Math.random()*7+2;
+  this.x=x;
+  this.y=y;
+  this.vx=Math.cos(a)*s;
+  this.vy=Math.sin(a)*s;
+  this.life=130+Math.random()*40;
+  this.size=Math.random()*2+1.5;
+  this.hue=hue;
+ }
+ update(){
+  this.vx*=.985;
+  this.vy*=.985;
+  this.vy+=.045;
+  this.x+=this.vx;
+  this.y+=this.vy;
+  this.life--;
+ }
+ draw(){
+  ctx.beginPath();
+  ctx.fillStyle=`hsla(${this.hue},100%,65%,${this.life/170})`;
+  ctx.arc(this.x,this.y,this.size,0,6.28);
+  ctx.fill();
+ }
+}
+
+function explode(x,y){
+ playBoom(y);
+
+ // 망막 플래시 (폭발 순간 번쩍)
+ flashAlpha=0.45; // 약하게 번쩍이도록 감소
+
+ const hue=Math.random()*360;
+ const count=150+Math.random()*60;
+ for(let i=0;i<count;i++)particles.push(new Particle(x,y,hue));
+}
+
+// ===== Animate =====
+function animate(){
+ ctx.setTransform(1,0,0,1,0,0);
+ ctx.globalCompositeOperation='source-over';
+ ctx.fillStyle='rgba(0,0,0,.18)';
+ ctx.fillRect(0,0,canvas.width,canvas.height);
+
+ ctx.fillStyle='#fff';
+ for(const s of stars)ctx.fillRect(s.x,s.y,s.size,s.size);
+
+ ctx.globalCompositeOperation='lighter';
+
+ for(let i=rockets.length-1;i>=0;i--){const r=rockets[i];r.update();r.draw();if(r.exploded)rockets.splice(i,1)}
+ for(let i=trails.length-1;i>=0;i--){const t=trails[i];t.update();t.draw();if(t.life<=0)trails.splice(i,1)}
+ for(let i=particles.length-1;i>=0;i--){const p=particles[i];p.update();p.draw();if(p.life<=0)particles.splice(i,1)}
+
+  // ===== Retina Flash Draw =====
+ if(flashAlpha>0){
+  ctx.globalCompositeOperation='source-over';
+  ctx.fillStyle=`rgba(255,255,255,${flashAlpha})`;
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+  flashAlpha*=0.9; // 더 부드럽게 천천히 사라짐 // 빠르게 사라짐
+  if(flashAlpha<0.02) flashAlpha=0;
+ }
+
+ requestAnimationFrame(animate);
+}
+animate();
+
+// ===== Audio Warmup =====
+window.addEventListener('pointerdown',()=>{
+ if(audioCtx.state==='suspended'){
+  audioCtx.resume();
+ }
+ const buffer=audioCtx.createBuffer(1,1,22050);
+ const src=audioCtx.createBufferSource();
+ src.buffer=buffer;
+ src.connect(audioCtx.destination);
+ try{src.start(0);}catch(e){}
+},{once:true});
+
+// ===== Launch =====
+function launchRocket(e){
+ const rect=canvas.getBoundingClientRect();
+ const x=(e.touches?e.touches[0].clientX:e.clientX)-rect.left;
+ const y=(e.touches?e.touches[0].clientY:e.clientY)-rect.top;
+
+ playStart(y);
+
+ rockets.push(new Rocket(x-12,y));
+ rockets.push(new Rocket(x,y));
+ rockets.push(new Rocket(x+12,y));
+}
+
+canvas.addEventListener('click',launchRocket);
+canvas.addEventListener('touchstart',launchRocket,{passive:true});
+
+// ===== Runtime Tests =====
+console.assert(audioCtx instanceof (window.AudioContext||window.webkitAudioContext),'AudioContext exists');
+console.assert(typeof distanceVolume==='function','distanceVolume must exist');
+console.assert(typeof playBoom==='function','playBoom must exist');
+console.assert(typeof playStart==='function','playStart must exist');
+console.assert(canvas instanceof HTMLCanvasElement,'Canvas exists');
+</script>
+</body>
+</html>

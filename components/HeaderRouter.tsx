@@ -10,6 +10,8 @@ import { WorkspaceBar } from "@/components/WorkspaceBar";
 export function HeaderRouter() {
   const pathname = usePathname();
   const isWorkspace = pathname?.startsWith("/workspace") ?? false;
+  const isFirework = pathname === "/firework" || pathname === "/firework2";
 
+  if (isFirework) return null;
   return isWorkspace ? <WorkspaceBar /> : <AppHeader />;
 }
